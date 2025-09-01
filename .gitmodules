@@ -1,3 +1,6 @@
 [submodule "px4-ComPiAutopilot"]
 	path = px4-ComPiAutopilot
 	url = git@github.com:AlZi-88/PX4-ComPiAutopilot.git
+[submodule "docker/ignition_sim"]
+	path = docker/ignition_sim
+	url = git@github.com:AlZi-88/ignition_container.git
