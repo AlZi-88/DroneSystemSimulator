@@ -7,18 +7,18 @@ model {
         description "A digital twin of the real drone system including PX4, companion computers, and simulated sensors"
         
 
-        is = container "Ignition Simulator" {
+        gz = container "Gazebo Simulator" {
             description "Simulates the physics, drone model, and environment"
-            technology "Ignition Gazebo"
+            technology "Gazebo Harmonic"
 
             lidar = component "Simulated LiDAR" {
                 description "Publishes LiDAR pointclouds via ROS2"
-                technology "Ignition plugin (RaySensor) + ROS2 bridge (ros_ign_bridge)"
+                technology "Gazebo plugin (RaySensor) + ROS2 bridge (ros_gz_bridge)"
             }
 
             camera = component "Simulated Camera Array" {
                 description "Publishes simulated camera feeds via ROS2"
-                technology "Ignition plugin (4xRGB Camera) + ROS2 bridge (ros_ign_bridge)"
+                technology "Gazebo plugin (4xRGB Camera) + ROS2 bridge (ros_gz_bridge)"
             }
 
             payload = component "Simulated Sensor Payload Frame" {
@@ -64,7 +64,7 @@ model {
     }
     d -> companion_1 "Deploys and monitors agents"
     px4_sitl -> companion_1 "Publishes telemetry via uXRCE-DDS"
-    is -> companion_1 "Publishes Images and Pointclouds"
+    gz -> companion_1 "Publishes Images and Pointclouds"
     camera -> companion_2 "Publishes Images"
     companion_2 -> d "Provides webservices"
     payload -> px4_sitl "influences flight model"

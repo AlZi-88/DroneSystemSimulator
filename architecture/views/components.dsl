@@ -1,4 +1,4 @@
-component is {
+component gz {
     include *
     autolayout lr
 }
