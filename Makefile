@@ -20,15 +20,18 @@ generate-diagrams:
 		$(STRUCTURIZR_CONTAINER_IMAGE) export -workspace workspace.dsl -format plantuml -output /usr/local/structurizr/diagrams
 
 build-sim-container:
+	source .env && \
 	cd docker/simulator_container && \
 	export DOCKER_BUILDKIT=1 && \
-	docker build -t $(LOCAL_SIMULATOR_IMAGE) -f Dockerfile .
+	docker build \
+		--build-arg GITHUB_TOKEN=$$GITHUB_TOKEN \
+		-t $(LOCAL_SIMULATOR_IMAGE) -f Dockerfile .
 
 local-sim-shell:
 	docker run --rm -it \
-			-p 8765:8765 -p 11345:11345 -p 14550:14550 -p 8888:8888 \
-			--mount type=bind,source="$(shell pwd)",target=/px4_sim \
-			-w /px4_sim/docker/simulator_container/references/px4-ComPiAutopilot \
+		-p 8765:8765 -p 11345:11345 -p 14550:14550 -p 8888:8888 \
+		--mount type=bind,source="$(shell pwd)",target=/px4_sim \
+		-w /px4_sim/docker/simulator_container/references/px4-ComPiAutopilot \
 		$(LOCAL_SIMULATOR_IMAGE) bash -c "\
 			chmod +x /px4_sim/px4_airframes/sync_airframes.sh && \
 			chmod +x /px4_sim/models/sync_models.sh && \
@@ -36,6 +39,9 @@ local-sim-shell:
 			. /px4_sim/px4_airframes/sync_airframes.sh && \
 			cp -r /px4_sim/models/* Tools/simulation/gz/models/ && \
 			bash"
+	cd docker/simulator_container/references/px4-ComPiAutopilot && \
+	git reset --hard && \
+	make distclean && git submodule update --init --recursive
 
 sim-container-shell:
 	docker run --rm -it \
