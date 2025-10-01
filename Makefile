@@ -1,6 +1,6 @@
 # Generate the architecture diagrams
 STRUCTURIZR_CONTAINER_IMAGE = structurizr/cli:latest
-SIMULATOR_CONTAINER_IMAGE = ghcr.io/alzi-88/ignition_simulator_container:latest
+SIMULATOR_CONTAINER_IMAGE = ghcr.io/alzi-88/drone_simulation_container:latest
 LOCAL_SIMULATOR_IMAGE = docker.io/library/simulation_container:latest
 
 pull-container:
@@ -45,6 +45,7 @@ local-sim-shell:
 
 sim-container-shell:
 	docker run --rm -it \
+		--platform linux/arm64 \
 		-p 8765:8765 -p 11345:11345 -p 14550:14550 -p 8888:8888 \
 		--mount type=bind,source="$(shell pwd)",target=/px4_sim \
 		-w /px4_sim/docker/simulator_container/references/px4-ComPiAutopilot \
