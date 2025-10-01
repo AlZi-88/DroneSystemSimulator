@@ -29,11 +29,17 @@ local-sim-shell:
 			-p 8765:8765 -p 11345:11345 -p 14550:14550 -p 8888:8888 \
 			--mount type=bind,source="$(shell pwd)",target=/px4_sim \
 			-w /px4_sim/docker/simulator_container/references/px4-ComPiAutopilot \
-		$(LOCAL_SIMULATOR_IMAGE) bash
+		$(LOCAL_SIMULATOR_IMAGE) bash -c "\
+			chmod +x /px4_sim/px4_airframes/sync_airframes.sh && \
+			chmod +x /px4_sim/models/sync_models.sh && \
+			. /px4_sim/models/sync_models.sh && \
+			. /px4_sim/px4_airframes/sync_airframes.sh && \
+			cp -r /px4_sim/models/* Tools/simulation/gz/models/ && \
+			bash"
 
 sim-container-shell:
 	docker run --rm -it \
-		-p 8765:8765 -p 11345:11345 \
+		-p 8765:8765 -p 11345:11345 -p 14550:14550 -p 8888:8888 \
 		--mount type=bind,source="$(shell pwd)",target=/px4_sim \
 		-w /px4_sim/docker/simulator_container/references/px4-ComPiAutopilot \
 		$(SIMULATOR_CONTAINER_IMAGE) bash
