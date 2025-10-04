@@ -15,9 +15,6 @@ cp -a "$SRC_DIR/." "$DEST_DIR/"
 airframes=()
 for f in "$SRC_DIR"/*; do
     [ -f "$f" ] && [[ $(basename "$f") =~ ^([0-9]+)_ ]] && airframes+=("$(basename "$f")")
-    if grep -q "__GCSIP__" "$f"; then
-        sed -i.bak "s/__GCSIP__/$GCS_IP/g" "$f" && rm -f "$f.bak"
-    fi
 done
 IFS=$'\n' airframes=($(printf "%s\n" "${airframes[@]}" | sort -n))
 
@@ -29,6 +26,11 @@ new_cmake_lines=()
 added_airframes=()
 
 for airframe in "${airframes[@]}"; do
+    # Replace __GCSIP__ with GCS_IP in the airframe file if present
+    if grep -q "__GCSIP__" "$DEST_DIR/$airframe"; then
+        sed -i.bak "s/__GCSIP__/$GCS_IP/g" "$DEST_DIR/$airframe"
+        rm "$DEST_DIR/$airframe.bak"
+    fi
     num=${airframe%%_*}
     inserted=0
     for i in "${!cmake_lines[@]}"; do
