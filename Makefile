@@ -29,7 +29,7 @@ build-sim-container:
 
 local-sim-shell:
 	docker run --rm -it \
-		-p 8765:8765 -p 11345:11345 -p 14550:14550 -p 8888:8888 \
+		-p 8765:8765 -p 11345:11345/tcp -p 14540:14540/udp -p 8888:8888 \
 		--mount type=bind,source="$(shell pwd)",target=/px4_sim \
 		-w /px4_sim/docker/simulator_container/references/px4-ComPiAutopilot \
 		$(LOCAL_SIMULATOR_IMAGE) bash -c "\
@@ -68,3 +68,8 @@ open-sim-gui:
 		fi; \
 		gz sim -v 4 -g & \
 	)
+
+cleanup-px4:
+	cd docker/simulator_container/references/px4-ComPiAutopilot && \
+	git reset --hard && \
+	make distclean && git submodule update --init --recursive
