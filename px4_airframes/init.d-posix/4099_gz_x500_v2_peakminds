@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# @name Gazebo x500
+# @name Gazebo x500_v2_peakminds
 #
 # @type Quadrotor
 #
@@ -61,4 +61,4 @@ param set-default NAV_DLL_ACT 2
 
 # Custom mavlink start (falls nicht automatisch)
 mavlink stop-all
-mavlink start -d /dev/null -u 14556 -o 14550 -t 172.17.0.3 -p -r 40000
+mavlink start -d /dev/null -u 14550 -o 14550 -t __GCSIP__ -p -r 40000

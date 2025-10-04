@@ -5,6 +5,8 @@ SRC_DIR="/px4_sim/px4_airframes/init.d-posix"
 DEST_DIR="ROMFS/px4fmu_common/init.d-posix/airframes"
 CMAKELISTS="$DEST_DIR/CMakeLists.txt"
 
+GCS_IP=$(getent hosts host.docker.internal | awk '{ print $1 }')
+
 # Copy all files from source to destination
 cp -a "$SRC_DIR/." "$DEST_DIR/"
 
@@ -13,6 +15,9 @@ cp -a "$SRC_DIR/." "$DEST_DIR/"
 airframes=()
 for f in "$SRC_DIR"/*; do
     [ -f "$f" ] && [[ $(basename "$f") =~ ^([0-9]+)_ ]] && airframes+=("$(basename "$f")")
+    if grep -q "__GCSIP__" "$f"; then
+        sed -i.bak "s/__GCSIP__/$GCS_IP/g" "$f" && rm -f "$f.bak"
+    fi
 done
 IFS=$'\n' airframes=($(printf "%s\n" "${airframes[@]}" | sort -n))
 
